@@ -1,0 +1,7 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/TrackService/bin/Debug/netcoreapp3.1
+/TrackService/obj
+/.vs/TrackService
