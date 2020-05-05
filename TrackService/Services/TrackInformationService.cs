@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.SignalR.Client;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using TrackService.Models;
@@ -13,12 +14,22 @@ namespace TrackService.Services
 
         public TrackInformationService(TrackingInformation trackingInfo)
         {
-            _connection = new HubConnectionBuilder()
-              .WithUrl("http://localhost:53353/TrackingServiceHub")
-              .Build();
-            _connection.StartAsync();
-            _trackingInfo = trackingInfo;
+            if (_connection.State != HubConnectionState.Connected)
+            {
+                //we will change remoteIp and remotePort with the hosted url in configuraion
+                _connection = new HubConnectionBuilder()
+                    .WithUrl("https://" + "remoteIp" + ":" + "remotePort" + "/api/TrackServiceHub", options =>
+                    {
+                        options.Transports = Microsoft.AspNetCore.Http.Connections.HttpTransportType.WebSockets | Microsoft.AspNetCore.Http.Connections.HttpTransportType.ServerSentEvents;
+                        options.CloseTimeout = new TimeSpan(0, 5, 0);
+                    })
+                    .Build();
+                _connection.StartAsync();
+                _trackingInfo = trackingInfo;
+            }
         }
+
+        // we will update the method to send model to repository to save in database
         public bool SetTrackingInformation(string trackingInfo)
         {
             //vehicle_id:100;lat:2000303;long:293923923424;date:12-09-2003T14:00:00
@@ -47,7 +58,7 @@ namespace TrackService.Services
             }
             else
             {
-                _connection.StartAsync();
+                return false;
             }
             return true;
         }
