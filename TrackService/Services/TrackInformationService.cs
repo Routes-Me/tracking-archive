@@ -17,7 +17,6 @@ namespace TrackService.Services
               .WithUrl("http://localhost:53353/TrackingServiceHub")
               .Build();
             _connection.StartAsync();
-
             _trackingInfo = trackingInfo;
         }
         public bool SetTrackingInformation(string trackingInfo)
