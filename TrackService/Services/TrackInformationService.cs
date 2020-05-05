@@ -1,8 +1,6 @@
 ﻿using Microsoft.AspNetCore.SignalR.Client;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using TrackService.Models;
 
 namespace TrackService.Services
@@ -18,7 +16,7 @@ namespace TrackService.Services
             _connection = new HubConnectionBuilder()
               .WithUrl("http://localhost:53353/TrackingServiceHub")
               .Build();
-
+            _connection.StartAsync();
 
             _trackingInfo = trackingInfo;
         }
@@ -28,22 +26,25 @@ namespace TrackService.Services
 
             if (_connectionState == HubConnectionState.Connected)
             {
-                string[] dataList = trackingInfo.Split(';');
+                List<string> dataList = trackingInfo.Split(';').ToList();
+                Dictionary<string, string> dict = new Dictionary<string, string>();
 
-                string vehicleId = dataList[0].ToString();
-                _trackingInfo.VehicleId = vehicleId.Substring(vehicleId.IndexOf(":") + 1);
+                var result = new string[2];
 
-
-                string latitude = dataList[1].ToString();
-                _trackingInfo.Latitude = latitude.Substring(latitude.IndexOf(":") + 1);
-
-
-                string longitude = dataList[2].ToString();
-                _trackingInfo.Longitude = longitude.Substring(longitude.IndexOf(":") + 1);
-
-
-                string date = dataList[3].ToString();
-                _trackingInfo.DateTime = date.Substring(date.IndexOf(":") + 1);
+                for (int i = 0; dataList.Count >= i; i++)
+                {
+                    if (i < 3)
+                    {
+                        result = dataList.ElementAt(i).Split(':');
+                        dict.Add(result[0], result[1]);
+                    }
+                    else
+                    {
+                        var dateWord = dataList.ElementAt(3).Substring(0, 4);
+                        var dateValue = dataList.ElementAt(3).Substring(5, dataList.ElementAt(3).Length - 5).Replace('T', ' ');
+                        dict.Add(dateWord, dateValue);
+                    }
+                }
             }
             else
             {
