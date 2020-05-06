@@ -21,7 +21,6 @@ namespace TrackService.Services
                     .WithUrl("https://" + "remoteIp" + ":" + "remotePort" + "/api/TrackServiceHub", options =>
                     {
                         options.Transports = Microsoft.AspNetCore.Http.Connections.HttpTransportType.WebSockets | Microsoft.AspNetCore.Http.Connections.HttpTransportType.ServerSentEvents;
-                        options.CloseTimeout = new TimeSpan(0, 5, 0);
                     })
                     .Build();
                 _connection.StartAsync();
