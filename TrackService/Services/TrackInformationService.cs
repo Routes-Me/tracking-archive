@@ -34,33 +34,37 @@ namespace TrackService.Services
         {
             //vehicle_id:100;lat:2000303;long:293923923424;date:12-09-2003T14:00:00
 
-            if (_connectionState == HubConnectionState.Connected)
+            if (trackingInfo != null)
             {
-                List<string> dataList = trackingInfo.Split(';').ToList();
-                Dictionary<string, string> dict = new Dictionary<string, string>();
-
-                var result = new string[2];
-
-                for (int i = 0; dataList.Count >= i; i++)
+                if (_connectionState == HubConnectionState.Connected)
                 {
-                    if (i < 3)
+                    List<string> dataList = trackingInfo.Split(';').ToList();
+                    Dictionary<string, string> dict = new Dictionary<string, string>();
+
+                    var result = new string[2];
+
+                    for (int i = 0; dataList.Count >= i; i++)
                     {
-                        result = dataList.ElementAt(i).Split(':');
-                        dict.Add(result[0], result[1]);
+                        if (i < 3)
+                        {
+                            result = dataList.ElementAt(i).Split(':');
+                            dict.Add(result[0], result[1]);
+                        }
+                        else
+                        {
+                            var dateWord = dataList.ElementAt(3).Substring(0, 4);
+                            var dateValue = dataList.ElementAt(3).Substring(5, dataList.ElementAt(3).Length - 5).Replace('T', ' ');
+                            dict.Add(dateWord, dateValue);
+                        }
                     }
-                    else
-                    {
-                        var dateWord = dataList.ElementAt(3).Substring(0, 4);
-                        var dateValue = dataList.ElementAt(3).Substring(5, dataList.ElementAt(3).Length - 5).Replace('T', ' ');
-                        dict.Add(dateWord, dateValue);
-                    }
+                    return true;
+                }
+                else
+                {
+                    return false;
                 }
             }
-            else
-            {
-                return false;
-            }
-            return true;
+            return false;
         }
     }
 }
