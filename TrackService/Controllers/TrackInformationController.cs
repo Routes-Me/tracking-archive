@@ -1,10 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.SignalR.Client;
-using System;
-using System.Data;
-using System.Threading.Tasks;
+using TrackService.IServices;
 using TrackService.Models;
-using TrackService.Services;
 
 namespace TrackService.Controllers
 {
@@ -13,8 +9,8 @@ namespace TrackService.Controllers
     public class TrackInformationController : ControllerBase
     {
         private TrackingInformation _trackingInfo;
-        private TrackInformationService _trackInformationService;
-        public TrackInformationController(TrackInformationService trackInformationService)
+        private ITrackInformationService _trackInformationService;
+        public TrackInformationController(ITrackInformationService trackInformationService)
         {
             _trackInformationService = trackInformationService;
         }

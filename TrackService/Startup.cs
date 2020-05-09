@@ -10,6 +10,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using TrackService.IServices;
+using TrackService.Services;
 
 namespace TrackService
 {
@@ -31,6 +33,7 @@ namespace TrackService
                 hubOptions.EnableDetailedErrors = true;
                 hubOptions.ClientTimeoutInterval = TimeSpan.FromMinutes(10);
             });
+            services.AddScoped<ITrackInformationService, TrackInformationService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

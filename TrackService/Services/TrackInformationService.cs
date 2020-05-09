@@ -2,11 +2,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using TrackService.IServices;
 using TrackService.Models;
 
 namespace TrackService.Services
 {
-    public class TrackInformationService
+    public class TrackInformationService : ITrackInformationService
     {
         HubConnection _connection;
         private HubConnectionState _connectionState;
