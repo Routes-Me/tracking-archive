@@ -5,3 +5,11 @@
 /TrackService/bin/Debug/netcoreapp3.1
 /TrackService/obj
 /.vs/TrackService
+/.vs/VSWorkspaceState.json
+/.vs/slnx.sqlite
+/.vs/ProjectSettings.json
+/.vs/Final- TrackingService/v16/.suo
+/TrackService.RethinkDb_Abstractions/bin/Debug/netcoreapp3.1
+/TrackService.RethinkDb_Abstractions/obj
+/TrackService.RethinkDb_Changefeed/bin/Debug/netcoreapp3.1
+/TrackService.RethinkDb_Changefeed/obj
