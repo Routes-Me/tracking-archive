@@ -13,3 +13,9 @@
 /TrackService.RethinkDb_Abstractions/obj
 /TrackService.RethinkDb_Changefeed/bin/Debug/netcoreapp3.1
 /TrackService.RethinkDb_Changefeed/obj
+/SignalR-Client/SignalR Client/bin/Debug/netcoreapp3.1
+/SignalR-Client/SignalR Client/obj
+/SignalR-Client/SignalRChat/bin/Debug/netcoreapp3.1
+/SignalR-Client/SignalRChat/obj
+/SignalR_ReceiverClient/SignalR_ReceiverClient/bin/Debug/netcoreapp3.1
+/SignalR_ReceiverClient/SignalR_ReceiverClient/obj
