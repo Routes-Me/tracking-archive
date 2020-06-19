@@ -14,6 +14,9 @@ namespace TrackService.Services
         {
             services.AddSingleton<IHostedService, ThreadStatsChangefeedBackgroundService>();
             services.AddSingleton<IHostedService, MonitorVehicles>();
+            services.AddSingleton<IHostedService, DoFrequentWork>();
+            services.AddSingleton<IHostedService, DoInfrequentWork>();
+            services.AddSingleton<IHostedService, ClearData>();
             return services;
         }
     }

@@ -10,13 +10,15 @@ using TrackService.RethinkDb_Abstractions;
 
 namespace TrackService.RethinkDb_Changefeed
 {
-    internal class ThreadStatsRethinkDbService : IThreadStatsChangefeedDbService
+    public class ThreadStatsRethinkDbService : IThreadStatsChangefeedDbService
     {
         private const string DATABASE_NAME = "trackingdb";
         private const string VEHICLE_TABLE_NAME = "vehicles";
         private const string CORDINATE_TABLE_NAME = "coordinates";
         private const string ARCHIVE_VEHICLE_TABLE_NAME = "archive_vehicles";
         private const string ARCHIVE_CORDINATE_TABLE_NAME = "archive_coordinates";
+
+        public static bool IsAnotherServiceWorking = false;
 
         private readonly RethinkDb.Driver.RethinkDB _rethinkDbSingleton;
         private readonly Connection _rethinkDbConnection;

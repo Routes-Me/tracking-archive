@@ -3,7 +3,7 @@ using RethinkDb.Driver.Net;
 
 namespace TrackService.RethinkDb_Changefeed
 {
-    internal interface IRethinkDbSingletonProvider
+    public interface IRethinkDbSingletonProvider
     {
         RethinkDB RethinkDbSingleton { get; }
 

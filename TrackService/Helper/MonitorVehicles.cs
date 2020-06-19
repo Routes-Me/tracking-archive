@@ -23,9 +23,9 @@ namespace TrackService.Helper
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             var autoEvent = new AutoResetEvent(false);
+            var autoEventFrequent = new AutoResetEvent(false);
             var statusChecker = new StatusChecker(_threadStatsChangefeedDbService);
             await Task.Run(() => { new Timer(statusChecker.CheckStatus, autoEvent, TimeSpan.FromSeconds(60), TimeSpan.FromSeconds(60)); autoEvent.WaitOne(); }).ConfigureAwait(false);
-
         }
     }
 
@@ -37,7 +37,6 @@ namespace TrackService.Helper
             _threadStatsChangefeedDbService = threadStatsChangefeedDbService;
         }
 
-        public static int count = 0;
         public void CheckStatus(Object stateInfo)
         {
             _threadStatsChangefeedDbService.UpdateThreadStatsAsync();
