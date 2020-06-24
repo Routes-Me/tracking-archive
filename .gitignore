@@ -25,3 +25,7 @@
 /SignalR_ReceiverClient
 /SignalR-Receiver/SignalR_ReceiverClient/bin/Debug/netcoreapp3.1
 /SignalR-Receiver/SignalR_ReceiverClient/obj
+/SignalR-Receiver/.vs/SignalR_ReceiverClient/v16/Server/sqlite3/storage.ide-wal
+/SignalR-Receiver/.vs/SignalR_ReceiverClient/v16/Server/sqlite3/storage.ide-shm
+/SignalR-Receiver/.vs/SignalR_ReceiverClient/v16/Server/sqlite3/storage.ide
+/SignalR-Receiver/.vs/SignalR_ReceiverClient/v16/Server/sqlite3/db.lock
