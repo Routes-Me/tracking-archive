@@ -40,9 +40,9 @@ namespace TrackService.Controllers
                     List<VehicleDetails> vehicleDetails = new List<VehicleDetails>();
 
                     if (string.IsNullOrEmpty(Convert.ToString(IdleModel.institution_id)))
-                        await Task.Run(() => { oVehicleResponse = _threadStatsChangefeedDbService.GetVehicleDetail(IdleModel); }).ConfigureAwait(false);
+                        await Task.Run(() => { oVehicleResponse = _threadStatsChangefeedDbService.GetAllVehicleDetails(IdleModel); }).ConfigureAwait(false);
                     else
-                        await Task.Run(() => { oVehicleResponse = _threadStatsChangefeedDbService.GetVehicleDetailData(IdleModel); }).ConfigureAwait(false);
+                        await Task.Run(() => { oVehicleResponse = _threadStatsChangefeedDbService.GetAllVehicleDetailByInstitutionId(IdleModel); }).ConfigureAwait(false);
 
                     if (oVehicleResponse.responseCode != ResponseCode.Success)
                         return NotFound(oVehicleResponse);

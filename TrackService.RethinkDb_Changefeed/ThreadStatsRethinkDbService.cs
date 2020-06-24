@@ -111,7 +111,8 @@ namespace TrackService.RethinkDb_Changefeed
                 await _rethinkDbSingleton.Db(DATABASE_NAME).Table(CORDINATE_TABLE_NAME).Changes().RunChangesAsync<Coordinates>(_rethinkDbConnection, cancellationToken)
             );
         }
-        public VehicleResponse GetVehicleDetailData(IdleModel IdleModel)
+
+        public VehicleResponse GetAllVehicleDetails(IdleModel IdleModel)
         {
             var keys = _rethinkDbSingleton.Db(DATABASE_NAME).Table(VEHICLE_TABLE_NAME).Run(_rethinkDbConnection);
             DateTime startDate;
@@ -153,8 +154,6 @@ namespace TrackService.RethinkDb_Changefeed
             {
                 vehicles = _rethinkDbSingleton.Db(DATABASE_NAME).Table(VEHICLE_TABLE_NAME).Filter(filterExprForInstitutionId).Filter(filterExprForLive).Run(_rethinkDbConnection);
             }
-
-
 
             List<VehicleDetails> listVehicles = new List<VehicleDetails>();
             List<CoordinatesDetail> listCoordinates = new List<CoordinatesDetail>();
@@ -232,7 +231,7 @@ namespace TrackService.RethinkDb_Changefeed
             return oVehicleResponse;
         }
 
-        public VehicleResponse GetVehicleDetail(IdleModel IdleModel)
+        public VehicleResponse GetAllVehicleDetailByInstitutionId(IdleModel IdleModel)
         {
             var keys = _rethinkDbSingleton.Db(DATABASE_NAME).Table(VEHICLE_TABLE_NAME).Run(_rethinkDbConnection);
             DateTime startDate;
@@ -339,8 +338,8 @@ namespace TrackService.RethinkDb_Changefeed
 
         public string GetInstitutionId(string vehicleId)
         {
-            var keys = _rethinkDbSingleton.Db(DATABASE_NAME).Table(VEHICLE_TABLE_NAME).Get(vehicleId).GetField("InstitutionId").Run(_rethinkDbConnection);
-            return Convert.ToString(keys);
+            var institutionId = _rethinkDbSingleton.Db(DATABASE_NAME).Table(VEHICLE_TABLE_NAME).Get(vehicleId).GetField("InstitutionId").Run(_rethinkDbConnection);
+            return Convert.ToString(institutionId);
         }
 
         public bool VehicleExists(string vehicleId)
@@ -367,6 +366,7 @@ namespace TrackService.RethinkDb_Changefeed
                 return false;
         }
 
+        // This is called from background service Monitor Vehicle
         public void UpdateThreadStatsAsync()
         {
             ReqlFunction1 filter = expr => expr["TimeStamp"].Le(DateTime.UtcNow.AddMinutes(-10));

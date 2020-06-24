@@ -13,8 +13,8 @@ namespace TrackService.RethinkDb_Abstractions
         bool VehicleExists(string vehicleId);
         bool InstitutionExists(string vehicleId);
         Task<IChangefeed<Coordinates>> GetThreadStatsChangefeedAsync(CancellationToken cancellationToken);
-        VehicleResponse GetVehicleDetail(IdleModel IdleModel);
-        VehicleResponse GetVehicleDetailData(IdleModel IdleModel);
+        VehicleResponse GetAllVehicleDetails(IdleModel IdleModel);
+        VehicleResponse GetAllVehicleDetailByInstitutionId(IdleModel IdleModel);
         void FrequentChanges();
         void InfrequentChanges();
         void CleanArchiveData();

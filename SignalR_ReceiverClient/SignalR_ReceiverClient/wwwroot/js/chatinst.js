@@ -2,9 +2,6 @@
 
 var connection = new signalR.HubConnectionBuilder().withUrl("http://localhost:55202/trackServiceHub").build();
 
-//Disable send button until connection is established
-//document.getElementById("sendButton").disabled = true;
-
 connection.on("ReceiveAllInstitutionVehicleData", function (result) {
     var li = document.createElement("li");
     li.textContent = result;
@@ -15,12 +12,6 @@ connection.on("ReceiveSubscribedVehicleData", function (result) {
     var li = document.createElement("li");
     li.textContent = result;
     document.getElementById("messagesList").appendChild(li);
-});
-
-connection.on("SendAccountInfo", function () {
-    connection.invoke("MapAccountInfo", true, "Dashboard01").catch(function (err) {
-        return console.error(err.toString());
-    });
 });
 
 connection.on("ErrorMessage", function (result) {
@@ -37,12 +28,10 @@ function restartConnectionIfStopped() {
             var functionName = document.getElementById("SubscribedFunction").value;
             var value = document.getElementById("SubscribedValue").value;
             if (functionName == 'SendAllVehicleDataForInstitutionId') {
-
                 connection.invoke("SendAllVehicleDataForInstitutionId", value)
             }
             if (functionName == 'SendSubscribedVehicleData') {
-
-                connection.invoke("SendAllVehicleDataForInstitutionId", value)
+                connection.invoke("SendSubscribedVehicleData", value)
             }
         }).catch(function (err) {
             return console.error(err.toString());

@@ -46,14 +46,9 @@ namespace TrackService.Helper
                     var TimeStamp = newThreadStats.Split(",")[4].Replace("timestamp:", "").Trim();
                     var json = "{\"vehicle_id\": \"" + VehicleNum + "\",\"institution_id\": \"" + InstitutionId + "\",\"coordinates\": {\"latitude\": \"" + Latitude + "\", \"longitude\": \"" + Longitude +"\",\"timestamp\": \"" + TimeStamp + "\"}}";
                     trackServiceHub = new TrackServiceHub();
-                    await Task.Run(() => { trackServiceHub.SendAllVehicleDataToClient(_hubContext, json); }).ConfigureAwait(true);
+                    await Task.Run(() => { trackServiceHub.SendAllVehicleDataToClient(_hubContext, json); }).ConfigureAwait(true); // To send data to all subscribe vehicled for admin
                     await Task.Run(() => { trackServiceHub.SendAllVehicleDataForInstitutionIdToClient(_hubContext, InstitutionId, json); }).ConfigureAwait(true);
-                    await Task.Run(() => { trackServiceHub.SendSubscribedVehicleDataToClient(_hubContext, VehicleNum, json); }).ConfigureAwait(true);                    //await Task.Run(() => { trackServiceHub.SendAllVehicleDataToClient(_hubContext, VehicleNum, Longitude, Latitude, TimeStamp, InstitutionId); }).ConfigureAwait(true);
-                    //await Task.Run(() => { trackServiceHub.SendAllVehicleDataForInstitutionIdToClient(_hubContext, VehicleNum, Longitude, Latitude, TimeStamp, InstitutionId); }).ConfigureAwait(true);
-                    //await Task.Run(() => { trackServiceHub.SendSubscribedVehicleDataToClient(_hubContext, VehicleId, VehicleNum, Longitude, Latitude, TimeStamp, InstitutionId); }).ConfigureAwait(true);
-                    await Task.WhenAll(
-                        _serverSentEventsService.SendEventAsync(newThreadStats)
-                    );
+                    await Task.Run(() => { trackServiceHub.SendSubscribedVehicleDataToClient(_hubContext, VehicleNum, json); }).ConfigureAwait(true); 
                 }
             }
             catch (OperationCanceledException)

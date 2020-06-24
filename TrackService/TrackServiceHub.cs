@@ -18,9 +18,11 @@ namespace TrackService
         public readonly static AllVehiclesMapping<string> _allvehicles = new AllVehiclesMapping<string>();
         public readonly static InstitutionsMapping<string> _institutions = new InstitutionsMapping<string>();
         public readonly static SubscribedVehiclesMapping<string> _subscribedvehicles = new SubscribedVehiclesMapping<string>();
-        public readonly static AllVehiclesMappingById<string> _allvehiclesbyid = new AllVehiclesMappingById<string>();
-        public readonly static InstitutionsMappingById<string> _institutionsbyid = new InstitutionsMappingById<string>();
-        public readonly static SubscribedVehiclesMappingById<string> _subscribedvehiclesbyid = new SubscribedVehiclesMappingById<string>();
+
+        public readonly static AllVehiclesMappingById<string> _allData = new AllVehiclesMappingById<string>();
+        public readonly static InstitutionsMappingById<string> _institutionsData = new InstitutionsMappingById<string>();
+        public readonly static SubscribedVehiclesMappingById<string> _vehiclesData = new SubscribedVehiclesMappingById<string>();
+
         private readonly IThreadStatsChangefeedDbService _threadStatsChangefeedDbService;
 
         public TrackServiceHub()
@@ -32,7 +34,7 @@ namespace TrackService
             _threadStatsChangefeedDbService = threadStatsChangefeedDbService;
         }
 
-
+        // This function is called from sender(Project) to send vehicle data.
         public async void SendMessage(string VehicleId, string Longitude, string Latitude, string Institution)
         {
             if (string.IsNullOrEmpty(VehicleId))
@@ -90,15 +92,15 @@ namespace TrackService
             });
         }
 
-        public void SendAllVehicleData()
+        #region Called from Dashboard to Subscribe data
+        public void SendAllVehicleData() // Subscribe All Vehicle Data For Admin
         {
-            _allvehiclesbyid.Remove(Context.ConnectionId);
-            _allvehiclesbyid.Add(Context.ConnectionId, "ALL");
-            _institutionsbyid.Remove(Context.ConnectionId);
-            _subscribedvehiclesbyid.Remove(Context.ConnectionId);
+            _institutionsData.Remove(Context.ConnectionId);
+            _vehiclesData.Remove(Context.ConnectionId);
+            _allData.Add(Context.ConnectionId, "ALL");
         }
 
-        public async void SendAllVehicleDataForInstitutionId(string InstitutionId)
+        public async void SendAllVehicleDataForInstitutionId(string InstitutionId) // Subscribe All Vehicle Data For Particular Institution
         {
             if (string.IsNullOrEmpty(InstitutionId))
             {
@@ -117,13 +119,13 @@ namespace TrackService
                 await Clients.Client(Context.ConnectionId).SendAsync("ErrorMessage", "{ \"code\":\"101\", \"message\":\"Institution does not exists!\" }");
                 return;
             }
-            _allvehiclesbyid.Remove(Context.ConnectionId);
-            _institutionsbyid.Remove(Context.ConnectionId);
-            _institutionsbyid.Add(Context.ConnectionId, InstitutionId);
-            _subscribedvehiclesbyid.Remove(Context.ConnectionId);
+            _allData.Remove(Context.ConnectionId);
+            _institutionsData.Remove(Context.ConnectionId);
+            _institutionsData.Add(Context.ConnectionId, InstitutionId);
+            _vehiclesData.Remove(Context.ConnectionId);
         }
 
-        public async void SendSubscribedVehicleData(string VehicleId)
+        public async void SendSubscribedVehicleData(string VehicleId) // Subscribe All Vehicle Data For Particular VehicleId
         {
             if (string.IsNullOrEmpty(VehicleId))
             {
@@ -142,15 +144,17 @@ namespace TrackService
                 await Clients.Client(Context.ConnectionId).SendAsync("ErrorMessage", "{ \"code\":\"102\", \"message\":\"Vehicle does not exists!\" }");
                 return;
             }
-            _allvehiclesbyid.Remove(Context.ConnectionId);
-            _institutionsbyid.Remove(Context.ConnectionId);
-            _subscribedvehiclesbyid.Remove(Context.ConnectionId);
-            _subscribedvehiclesbyid.Add(Context.ConnectionId, VehicleId);
+            _allData.Remove(Context.ConnectionId);
+            _institutionsData.Remove(Context.ConnectionId);
+            _vehiclesData.Remove(Context.ConnectionId);
+            _vehiclesData.Add(Context.ConnectionId, VehicleId);
         }
+        #endregion
 
-        public async void SendAllVehicleDataToClient(IHubContext<TrackServiceHub> context, string json)
+        #region Called from Change feed to send data to Dashboard
+        public async void SendAllVehicleDataToClient(IHubContext<TrackServiceHub> context, string json) // Send All Vehicle Data For Admin
         {
-            var keys = _allvehiclesbyid.GetAllData();
+            var keys = _allData.GetAllData();
             if (keys.Count > 0)
             {
                 foreach (var key in keys)
@@ -161,9 +165,9 @@ namespace TrackService
             await context.Clients.All.SendAsync("ReceiveAll", json);
         }
 
-        public async void SendAllVehicleDataForInstitutionIdToClient(IHubContext<TrackServiceHub> context, string institutionId, string json)
+        public async void SendAllVehicleDataForInstitutionIdToClient(IHubContext<TrackServiceHub> context, string institutionId, string json) // Send All Vehicle Data For particular Institution
         {
-            var keys = _institutionsbyid.GetAllData(institutionId);
+            var keys = _institutionsData.GetAllData(institutionId);
             if (keys.Count > 0)
             {
                 foreach (var key in keys)
@@ -173,9 +177,9 @@ namespace TrackService
             }
         }
 
-        public async void SendSubscribedVehicleDataToClient(IHubContext<TrackServiceHub> context, string VehicleId, string json)
+        public async void SendSubscribedVehicleDataToClient(IHubContext<TrackServiceHub> context, string VehicleId, string json) // Send All Vehicle Data For particular Vehicle
         {
-            var keys = _subscribedvehiclesbyid.GetAllData(VehicleId);
+            var keys = _vehiclesData.GetAllData(VehicleId);
             if (keys.Count > 0)
             {
                 foreach (var key in keys)
@@ -185,34 +189,28 @@ namespace TrackService
             }
         }
 
+        #endregion
+
         public void UnsubscribeVehicleData()
         {
-            _allvehiclesbyid.Remove(Context.ConnectionId);
-            _institutionsbyid.Remove(Context.ConnectionId);
-            _subscribedvehiclesbyid.Remove(Context.ConnectionId);
-        }
-
-        public void MapAccountInfo(bool isDashboard, string AccountValue)
-        {
-            if (isDashboard)
-                _connections.Add(AccountValue, Context.ConnectionId);
+            _allData.Remove(Context.ConnectionId);
+            _institutionsData.Remove(Context.ConnectionId);
+            _vehiclesData.Remove(Context.ConnectionId);
         }
 
         public override async Task OnConnectedAsync()
         {
-            await Clients.Clients(Context.ConnectionId).SendAsync("SendAccountInfo");
             await base.OnConnectedAsync();
         }
 
         public override async Task OnDisconnectedAsync(Exception ex)
         {
-            _allvehiclesbyid.Remove(Context.ConnectionId);
-            _institutionsbyid.Remove(Context.ConnectionId);
-            _subscribedvehiclesbyid.Remove(Context.ConnectionId);
+            _allData.Remove(Context.ConnectionId);
+            _institutionsData.Remove(Context.ConnectionId);
+            _vehiclesData.Remove(Context.ConnectionId);
             await base.OnDisconnectedAsync(ex);
         }
     }
-
 }
 
 

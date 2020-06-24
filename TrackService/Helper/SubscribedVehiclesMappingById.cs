@@ -22,12 +22,12 @@ namespace TrackService.Helper
             return _connections.ContainsKey(key);
         }
 
-        public void Add(T key, string connectionId)
+        public void Add(T key, string value)
         {
             lock (_connections)
             {
                 if (!_connections.ContainsKey(key))
-                    _connections.Add(key, connectionId);
+                    _connections.Add(key, value);
             }
         }
 
@@ -39,9 +39,9 @@ namespace TrackService.Helper
 
         public string GetSubscribedVehiclesId(T key)
         {
-            string connections;
-            if (_connections.TryGetValue(key, out connections))
-                return connections;
+            string value;
+            if (_connections.TryGetValue(key, out value))
+                return value;
 
             return null;
         }

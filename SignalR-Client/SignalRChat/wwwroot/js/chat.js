@@ -5,12 +5,10 @@ var connection = new signalR.HubConnectionBuilder().withUrl("http://localhost:55
 //Disable send button until connection is established
 document.getElementById("sendButton").disabled = true;
 
-connection.on("ReceiveMessage", function (message) {
-    var msg = message.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-    var encodedMsg = user + " says " + msg;
-    var li = document.createElement("li");
-    li.textContent = encodedMsg;
-    document.getElementById("messagesList").appendChild(li);
+connection.start().then(function () {
+    document.getElementById("sendButton").disabled = false;
+}).catch(function (err) {
+    return console.error(err.toString());
 });
 
 connection.on("SendAccountInfo", function () {
@@ -19,18 +17,12 @@ connection.on("SendAccountInfo", function () {
     });
 });
 
-connection.onclose(e => {
-    console.log('{ "code": "108", "message": "Server connection failed!" }')
-});
-
-connection.start().then(function () {
-    document.getElementById("sendButton").disabled = false;
-}).catch(function (err) {
-    return console.error(err.toString());
-});
-
 connection.on("ErrorMessage", function (result) {
     alert(result);
+});
+
+connection.onclose(e => {
+    console.log('{ "code": "108", "message": "Server connection failed!" }')
 });
 
 function restartConnectionIfStopped() {
@@ -41,7 +33,6 @@ function restartConnectionIfStopped() {
         });
     }
 }
-
 setInterval(restartConnectionIfStopped, 10000);
 
 document.getElementById("sendButton").addEventListener("click", function (event) {
