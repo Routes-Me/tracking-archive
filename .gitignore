@@ -23,3 +23,5 @@
 /SignalR_ReceiverClient/.vs/SignalR_ReceiverClient/v16/Server/sqlite3
 /SignalR-Client/.vs/SignalR Client/v16/Server/sqlite3
 /SignalR_ReceiverClient
+/SignalR-Receiver/SignalR_ReceiverClient/bin/Debug/netcoreapp3.1
+/SignalR-Receiver/SignalR_ReceiverClient/obj
