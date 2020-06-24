@@ -9,10 +9,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TrackService.RethinkDb_Abst
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TrackService.RethinkDb_Changefeed", "TrackService.RethinkDb_Changefeed\TrackService.RethinkDb_Changefeed.csproj", "{1B1FC215-D53E-4363-82B7-BD5C1B3D8427}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SignalR_ReceiverClient", "SignalR_ReceiverClient\SignalR_ReceiverClient\SignalR_ReceiverClient.csproj", "{D5DAC6A6-372E-41A7-B9F7-4D31328A8C94}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SignalR_SenderClient", "SignalR-Client\SignalR Client\SignalR_SenderClient.csproj", "{BF8CB785-9214-4E96-9067-E11AEE6BA912}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -31,14 +27,6 @@ Global
 		{1B1FC215-D53E-4363-82B7-BD5C1B3D8427}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1B1FC215-D53E-4363-82B7-BD5C1B3D8427}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1B1FC215-D53E-4363-82B7-BD5C1B3D8427}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D5DAC6A6-372E-41A7-B9F7-4D31328A8C94}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D5DAC6A6-372E-41A7-B9F7-4D31328A8C94}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D5DAC6A6-372E-41A7-B9F7-4D31328A8C94}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D5DAC6A6-372E-41A7-B9F7-4D31328A8C94}.Release|Any CPU.Build.0 = Release|Any CPU
-		{BF8CB785-9214-4E96-9067-E11AEE6BA912}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{BF8CB785-9214-4E96-9067-E11AEE6BA912}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{BF8CB785-9214-4E96-9067-E11AEE6BA912}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{BF8CB785-9214-4E96-9067-E11AEE6BA912}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
