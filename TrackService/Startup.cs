@@ -44,7 +44,7 @@ namespace TrackService
             #endregion
             services.AddServerSentEvents();
             services.AddThreadStats();
-            services.AddSignalR();
+            services.AddSignalR(o => o.MaximumReceiveMessageSize = 1024); //bytes
             services.Configure<RethinkDbOptions>(Configuration.GetSection("RethinkDbDev"));
             services.AddSingleton<IRethinkDbConnectionFactory, RethinkDbConnectionFactory>();
 

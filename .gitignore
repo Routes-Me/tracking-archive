@@ -29,3 +29,5 @@
 /SignalR-Receiver/.vs/SignalR_ReceiverClient/v16/Server/sqlite3/storage.ide-shm
 /SignalR-Receiver/.vs/SignalR_ReceiverClient/v16/Server/sqlite3/storage.ide
 /SignalR-Receiver/.vs/SignalR_ReceiverClient/v16/Server/sqlite3/db.lock
+/ReceiverClient/obj
+/SenderClient/obj

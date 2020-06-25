@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace TrackService.Helper
 {
-    public class AllVehiclesMapping<T>
+    public class AllVehicleMapping<T>
     {
         private readonly Dictionary<T, HashSet<string>> _connections = new Dictionary<T, HashSet<string>>();
 
@@ -35,7 +35,7 @@ namespace TrackService.Helper
             }
         }
 
-        public IEnumerable<string> GetAllVehiclesId(T key)
+        public IEnumerable<string> GetAll_ConnectionId(T key)
         {
             HashSet<string> connections;
             if (_connections.TryGetValue(key, out connections))

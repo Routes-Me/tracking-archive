@@ -35,7 +35,7 @@ namespace TrackService.Helper
             }
         }
 
-        public IEnumerable<string> GetInstitutionsId(T key)
+        public IEnumerable<string> GetInstitution_ConnectionId(T key)
         {
             HashSet<string> connections;
             if (_connections.TryGetValue(key, out connections))

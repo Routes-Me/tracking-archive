@@ -10,18 +10,12 @@ using Microsoft.AspNetCore.Mvc.Formatters;
 
 namespace TrackService
 {
-
-
     public class TrackServiceHub : Hub
     {
         public readonly static ConnectionMapping<string> _connections = new ConnectionMapping<string>();
-        public readonly static AllVehiclesMapping<string> _allvehicles = new AllVehiclesMapping<string>();
+        public readonly static AllVehicleMapping<string> _all = new AllVehicleMapping<string>();
         public readonly static InstitutionsMapping<string> _institutions = new InstitutionsMapping<string>();
-        public readonly static SubscribedVehiclesMapping<string> _subscribedvehicles = new SubscribedVehiclesMapping<string>();
-
-        public readonly static AllVehiclesMappingById<string> _allData = new AllVehiclesMappingById<string>();
-        public readonly static InstitutionsMappingById<string> _institutionsData = new InstitutionsMappingById<string>();
-        public readonly static SubscribedVehiclesMappingById<string> _vehiclesData = new SubscribedVehiclesMappingById<string>();
+        public readonly static VehiclesMapping<string> _vehicles = new VehiclesMapping<string>();
 
         private readonly IThreadStatsChangefeedDbService _threadStatsChangefeedDbService;
 
@@ -48,13 +42,13 @@ namespace TrackService
                 await Clients.Client(Context.ConnectionId).SendAsync("ErrorMessage", "{ \"code\":\"105\", \"message\":\"InstitutionId required!\" }");
                 return;
             }
-            
+
             if (string.IsNullOrEmpty(Longitude))
             {
                 await Clients.Client(Context.ConnectionId).SendAsync("ErrorMessage", "{ \"code\":\"107\", \"message\":\"Longitude required!\" }");
                 return;
             }
-            
+
             if (string.IsNullOrEmpty(Latitude))
             {
                 await Clients.Client(Context.ConnectionId).SendAsync("ErrorMessage", "{ \"code\":\"106\", \"message\":\"Latitude required!\" }");
@@ -81,7 +75,7 @@ namespace TrackService
                 await Clients.Client(Context.ConnectionId).SendAsync("ErrorMessage", "{ \"code\":\"103\", \"message\":\"Bad request value. Invalid Latitude!\" }");
                 return;
             }
-            
+
             await _threadStatsChangefeedDbService.InsertThreadStatsAsync(new TrackingStats
             {
                 VehicleId = Convert.ToInt32(VehicleId),
@@ -92,110 +86,119 @@ namespace TrackService
             });
         }
 
-        #region Called from Dashboard to Subscribe data
-        public void SendAllVehicleData() // Subscribe All Vehicle Data For Admin
+        public async void Subscribe(string InstitutionId, string VehicleId, string All) 
         {
-            _institutionsData.Remove(Context.ConnectionId);
-            _vehiclesData.Remove(Context.ConnectionId);
-            _allData.Add(Context.ConnectionId, "ALL");
-        }
-
-        public async void SendAllVehicleDataForInstitutionId(string InstitutionId) // Subscribe All Vehicle Data For Particular Institution
-        {
-            if (string.IsNullOrEmpty(InstitutionId))
+            if (!string.IsNullOrEmpty(InstitutionId))
             {
-                await Clients.Client(Context.ConnectionId).SendAsync("ErrorMessage", "{ \"code\":\"105\", \"message\":\"InstitutionId required!\" }");
-                return;
-            }
-
-            if (!int.TryParse(InstitutionId, out int id))
-            {
-                await Clients.Client(Context.ConnectionId).SendAsync("ErrorMessage", "{ \"code\":\"103\", \"message\":\"Bad request value. Invalid InstitutionId!\" }");
-                return;
-            }
-
-            if (!_threadStatsChangefeedDbService.InstitutionExists(InstitutionId))
-            {
-                await Clients.Client(Context.ConnectionId).SendAsync("ErrorMessage", "{ \"code\":\"101\", \"message\":\"Institution does not exists!\" }");
-                return;
-            }
-            _allData.Remove(Context.ConnectionId);
-            _institutionsData.Remove(Context.ConnectionId);
-            _institutionsData.Add(Context.ConnectionId, InstitutionId);
-            _vehiclesData.Remove(Context.ConnectionId);
-        }
-
-        public async void SendSubscribedVehicleData(string VehicleId) // Subscribe All Vehicle Data For Particular VehicleId
-        {
-            if (string.IsNullOrEmpty(VehicleId))
-            {
-                await Clients.Client(Context.ConnectionId).SendAsync("ErrorMessage", "{ \"code\":\"104\", \"message\":\"VehicleId required!\" }");
-                return;
-            }
-
-            if (!int.TryParse(VehicleId, out int id))
-            {
-                await Clients.Client(Context.ConnectionId).SendAsync("ErrorMessage", "Bad request value. Invalid VehicleId!");
-                return;
-            }
-
-            if (!_threadStatsChangefeedDbService.VehicleExists(VehicleId))
-            {
-                await Clients.Client(Context.ConnectionId).SendAsync("ErrorMessage", "{ \"code\":\"102\", \"message\":\"Vehicle does not exists!\" }");
-                return;
-            }
-            _allData.Remove(Context.ConnectionId);
-            _institutionsData.Remove(Context.ConnectionId);
-            _vehiclesData.Remove(Context.ConnectionId);
-            _vehiclesData.Add(Context.ConnectionId, VehicleId);
-        }
-        #endregion
-
-        #region Called from Change feed to send data to Dashboard
-        public async void SendAllVehicleDataToClient(IHubContext<TrackServiceHub> context, string json) // Send All Vehicle Data For Admin
-        {
-            var keys = _allData.GetAllData();
-            if (keys.Count > 0)
-            {
-                foreach (var key in keys)
+                if (int.TryParse(InstitutionId, out int id))
                 {
-                    await context.Clients.Client(key).SendAsync("ReceiveAllVehicleData", json);
+                    if (_threadStatsChangefeedDbService.InstitutionExists(InstitutionId))
+                    {
+                        _institutions.Add(InstitutionId, Context.ConnectionId);
+                        return;
+                    }
+                    else
+                    {
+                        await Clients.Client(Context.ConnectionId).SendAsync("ErrorMessage", "{ \"code\":\"101\", \"message\":\"Institution does not exists!\" }");
+                        return;
+                    }
+                }
+                else
+                {
+                    await Clients.Client(Context.ConnectionId).SendAsync("ErrorMessage", "{ \"code\":\"103\", \"message\":\"Bad request value. Invalid InstitutionId!\" }");
+                    return;
                 }
             }
-            await context.Clients.All.SendAsync("ReceiveAll", json);
-        }
-
-        public async void SendAllVehicleDataForInstitutionIdToClient(IHubContext<TrackServiceHub> context, string institutionId, string json) // Send All Vehicle Data For particular Institution
-        {
-            var keys = _institutionsData.GetAllData(institutionId);
-            if (keys.Count > 0)
+            else if (!string.IsNullOrEmpty(VehicleId))
             {
-                foreach (var key in keys)
+                if (int.TryParse(VehicleId, out int id))
                 {
-                    await context.Clients.Client(key).SendAsync("ReceiveAllInstitutionVehicleData", json);
+                    if (_threadStatsChangefeedDbService.VehicleExists(VehicleId))
+                    {
+                        _vehicles.Add(VehicleId, Context.ConnectionId);
+                        return;
+                    }
+                    else
+                    {
+                        await Clients.Client(Context.ConnectionId).SendAsync("ErrorMessage", "{ \"code\":\"101\", \"message\":\"Vehicle does not exists!\" }");
+                        return;
+                    }
                 }
+                else
+                {
+                    await Clients.Client(Context.ConnectionId).SendAsync("ErrorMessage", "{ \"code\":\"103\", \"message\":\"Bad request value. Invalid VehicleId!\" }");
+                    return;
+                }
+            }
+            else if (!string.IsNullOrEmpty(All) && All.Equals("--all"))
+            {
+                _all.Add(All, Context.ConnectionId);
+            }
+            else
+            {
+                await Clients.Client(Context.ConnectionId).SendAsync("ErrorMessage", "{ \"code\":\"105\", \"message\":\"Please provide atleast one parameter!\" }");
+                return;
             }
         }
 
-        public async void SendSubscribedVehicleDataToClient(IHubContext<TrackServiceHub> context, string VehicleId, string json) // Send All Vehicle Data For particular Vehicle
+        public async void Unsubscribe(string InstitutionId, string VehicleId) 
         {
-            var keys = _vehiclesData.GetAllData(VehicleId);
-            if (keys.Count > 0)
+            if (string.IsNullOrEmpty(VehicleId) && string.IsNullOrEmpty(InstitutionId))
             {
-                foreach (var key in keys)
+                _all.Remove("--all", Context.ConnectionId);
+            }
+
+            if (!string.IsNullOrEmpty(InstitutionId))
+            {
+                if (int.TryParse(InstitutionId, out int id))
                 {
-                    await context.Clients.Client(key).SendAsync("ReceiveSubscribedVehicleData", json);
+                    _institutions.Remove(InstitutionId, Context.ConnectionId);
+                    return;
+                }
+                else
+                {
+                    await Clients.Client(Context.ConnectionId).SendAsync("ErrorMessage", "{ \"code\":\"103\", \"message\":\"Bad request value. Invalid InstitutionId!\" }");
+                    return;
+                }
+            }
+            
+            if (!string.IsNullOrEmpty(VehicleId))
+            {
+                if (int.TryParse(VehicleId, out int id))
+                {
+                    _vehicles.Remove(VehicleId, Context.ConnectionId);
+                    return;
+                }
+                else
+                {
+                    await Clients.Client(Context.ConnectionId).SendAsync("ErrorMessage", "{ \"code\":\"103\", \"message\":\"Bad request value. Invalid VehicleId!\" }");
+                    return;
                 }
             }
         }
 
-        #endregion
-
-        public void UnsubscribeVehicleData()
+        public async void SendDataToDashboard(IHubContext<TrackServiceHub> context, string institutionId, string vehicleId, string json)
         {
-            _allData.Remove(Context.ConnectionId);
-            _institutionsData.Remove(Context.ConnectionId);
-            _vehiclesData.Remove(Context.ConnectionId);
+            // Send data to ReceiveAll screen
+            await context.Clients.All.SendAsync("ReceiveAllData", json);
+
+            // Send all vehicle data to Admin.
+            foreach (var connectionid in _all.GetAll_ConnectionId("--all"))
+            {
+                await context.Clients.Client(connectionid).SendAsync("ReceiveAllVehicleData", json);
+            }
+
+            // Send all vehicle for institution.
+            foreach (var connectionid in _institutions.GetInstitution_ConnectionId(institutionId))
+            {
+                await context.Clients.Client(connectionid).SendAsync("ReceiveInstitutionData", json);
+            }
+
+            // Send vehicle data for vehicle.
+            foreach (var connectionid in _vehicles.GetVehicle_ConnectionId(vehicleId))
+            {
+                await context.Clients.Client(connectionid).SendAsync("ReceiveVehicleData", json);
+            }
         }
 
         public override async Task OnConnectedAsync()
@@ -205,12 +208,7 @@ namespace TrackService
 
         public override async Task OnDisconnectedAsync(Exception ex)
         {
-            _allData.Remove(Context.ConnectionId);
-            _institutionsData.Remove(Context.ConnectionId);
-            _vehiclesData.Remove(Context.ConnectionId);
             await base.OnDisconnectedAsync(ex);
         }
     }
 }
-
-

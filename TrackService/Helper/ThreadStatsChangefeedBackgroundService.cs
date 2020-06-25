@@ -15,14 +15,12 @@ namespace TrackService.Helper
     internal class ThreadStatsChangefeedBackgroundService : BackgroundService
     {
         private readonly IThreadStatsChangefeedDbService _threadStatsChangefeedDbService;
-        private readonly IServerSentEventsService _serverSentEventsService;
         private readonly IHubContext<TrackServiceHub> _hubContext;
         TrackServiceHub trackServiceHub;
 
-        public ThreadStatsChangefeedBackgroundService(IThreadStatsChangefeedDbService threadStatsChangefeedDbService, IServerSentEventsService serverSentEventsService, IHubContext<TrackServiceHub> hubContext)
+        public ThreadStatsChangefeedBackgroundService(IThreadStatsChangefeedDbService threadStatsChangefeedDbService, IHubContext<TrackServiceHub> hubContext)
         {
             _threadStatsChangefeedDbService = threadStatsChangefeedDbService;
-            _serverSentEventsService = serverSentEventsService;
             _hubContext = hubContext;
         }
 
@@ -46,9 +44,7 @@ namespace TrackService.Helper
                     var TimeStamp = newThreadStats.Split(",")[4].Replace("timestamp:", "").Trim();
                     var json = "{\"vehicle_id\": \"" + VehicleNum + "\",\"institution_id\": \"" + InstitutionId + "\",\"coordinates\": {\"latitude\": \"" + Latitude + "\", \"longitude\": \"" + Longitude +"\",\"timestamp\": \"" + TimeStamp + "\"}}";
                     trackServiceHub = new TrackServiceHub();
-                    await Task.Run(() => { trackServiceHub.SendAllVehicleDataToClient(_hubContext, json); }).ConfigureAwait(true); // To send data to all subscribe vehicled for admin
-                    await Task.Run(() => { trackServiceHub.SendAllVehicleDataForInstitutionIdToClient(_hubContext, InstitutionId, json); }).ConfigureAwait(true);
-                    await Task.Run(() => { trackServiceHub.SendSubscribedVehicleDataToClient(_hubContext, VehicleNum, json); }).ConfigureAwait(true); 
+                    await Task.Run(() => { trackServiceHub.SendDataToDashboard(_hubContext, InstitutionId, VehicleNum, json); }).ConfigureAwait(true); // To send data to all subscribe vehicled for admin
                 }
             }
             catch (OperationCanceledException)

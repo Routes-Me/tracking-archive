@@ -19,9 +19,9 @@ namespace TrackService.Controllers
     public class VehicleController : ControllerBase
     {
         readonly static ConnectionMapping<string> _connections = new ConnectionMapping<string>();
-        public readonly static AllVehiclesMapping<string> _allvehicles = new AllVehiclesMapping<string>();
+        public readonly static AllVehicleMapping<string> _allvehicles = new AllVehicleMapping<string>();
         public readonly static InstitutionsMapping<string> _institutions = new InstitutionsMapping<string>();
-        public readonly static SubscribedVehiclesMapping<string> _subscribedvehicles = new SubscribedVehiclesMapping<string>();
+        public readonly static VehiclesMapping<string> _subscribedvehicles = new VehiclesMapping<string>();
         private readonly IThreadStatsChangefeedDbService _threadStatsChangefeedDbService;
         public VehicleController(IThreadStatsChangefeedDbService threadStatsChangefeedDbService)
         {
