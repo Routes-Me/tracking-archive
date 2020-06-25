@@ -11,12 +11,6 @@ connection.start().then(function () {
     return console.error(err.toString());
 });
 
-connection.on("SendAccountInfo", function () {
-    connection.invoke("MapAccountInfo", false, "Vehicle").catch(function (err) {
-        return console.error(err.toString());
-    });
-});
-
 connection.on("ErrorMessage", function (result) {
     alert(result);
 });
@@ -40,7 +34,7 @@ document.getElementById("sendButton").addEventListener("click", function (event)
     var Longitude = document.getElementById("Longitude").value;
     var VehicleId = document.getElementById("VehicleId").value;
     var Institution = document.getElementById("Institution").value;
-    connection.invoke("SendMessage", VehicleId, Longitude, Latitude, Institution).catch(function (err) {
+    connection.invoke("SendLocation", VehicleId, Longitude, Latitude, Institution).catch(function (err) {
         return console.error(err.toString());
     });
     event.preventDefault();

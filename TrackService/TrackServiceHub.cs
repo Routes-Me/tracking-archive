@@ -29,7 +29,7 @@ namespace TrackService
         }
 
         // This function is called from sender(Project) to send vehicle data.
-        public async void SendMessage(string VehicleId, string Longitude, string Latitude, string Institution)
+        public async void SendLocation(string VehicleId, string Longitude, string Latitude, string Institution)
         {
             if (string.IsNullOrEmpty(VehicleId))
             {
