@@ -3,3 +3,15 @@
 ################################################################################
 
 /.vs/slnx.sqlite
+/.vs
+/TrackingService/.vs/TrackService/v16/Server/sqlite3
+/TrackingService/ReceiverClient/bin/Debug/netcoreapp3.1
+/TrackingService/ReceiverClient/obj
+/TrackingService/SenderClient/bin/Debug/netcoreapp3.1
+/TrackingService/SenderClient/obj
+/TrackingService/TrackService/bin/Debug/netcoreapp3.1
+/TrackingService/TrackService/obj
+/TrackingService/TrackService.RethinkDb_Abstractions/bin/Debug/netcoreapp3.1
+/TrackingService/TrackService.RethinkDb_Abstractions/obj
+/TrackingService/TrackService.RethinkDb_Changefeed/bin/Debug/netcoreapp3.1
+/TrackingService/TrackService.RethinkDb_Changefeed/obj
