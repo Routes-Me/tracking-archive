@@ -15,3 +15,7 @@
 /TrackingService/TrackService.RethinkDb_Abstractions/obj
 /TrackingService/TrackService.RethinkDb_Changefeed/bin/Debug/netcoreapp3.1
 /TrackingService/TrackService.RethinkDb_Changefeed/obj
+/ArchiveTrackService/ArchiveTrackService/bin/Debug/netcoreapp3.1
+/ArchiveTrackService/ArchiveTrackService/obj
+/ArchiveTrackService/.vs/ArchiveTrackService/v16/Server/sqlite3
+/TrackingService/.vs/TrackService/v16
