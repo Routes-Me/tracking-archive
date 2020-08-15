@@ -30,6 +30,7 @@ namespace AdvertisementService.Repository
                     response.message = "Advertisement not found.";
                     response.advertisementsDetails = null;
                     response.responseCode = ResponseCode.NotFound;
+                    return response;
                 }
 
                 var advertisementsIntervals = _context.Advertisementsintervals.Where(x => x.AdvertisementId == id).FirstOrDefault();
@@ -210,6 +211,26 @@ namespace AdvertisementService.Repository
                     return response;
                 }
 
+                var interval = _context.Intervals.Where(x => x.IntervalId == model.IntervalId).FirstOrDefault();
+                if (interval == null)
+                {
+                    response.status = false;
+                    response.message = "Interval not found.";
+                    response.advertisementsDetails = null;
+                    response.responseCode = ResponseCode.NotFound;
+                    return response;
+                }
+
+                var campaign = _context.Campaigns.Where(x => x.CampaignId == model.CampaignId).FirstOrDefault();
+                if (interval == null)
+                {
+                    response.status = false;
+                    response.message = "Campaign not found.";
+                    response.advertisementsDetails = null;
+                    response.responseCode = ResponseCode.NotFound;
+                    return response;
+                }
+
                 Advertisements objAdvertisements = new Advertisements()
                 {
                     CreatedAt = model.CreatedAt,
@@ -219,10 +240,25 @@ namespace AdvertisementService.Repository
                 _context.Advertisements.Add(objAdvertisements);
                 _context.SaveChanges();
 
+                Advertisementsintervals advertisementsintervals = new Advertisementsintervals()
+                {
+                    AdvertisementId = objAdvertisements.AdvertisementId,
+                    IntervalId = interval.IntervalId
+                };
+                _context.Advertisementsintervals.Add(advertisementsintervals);
+
+                Advertisementscampaigns objAdvertisementscampaigns = new Advertisementscampaigns()
+                {
+                    AdvertisementId = objAdvertisements.AdvertisementId,
+                    CampaignId = campaign.CampaignId
+                };
+                _context.Advertisementscampaigns.Add(objAdvertisementscampaigns);
+                _context.SaveChanges();
+
                 response.status = true;
                 response.message = "Advertisements inserted successfully.";
                 response.advertisementsDetails = null;
-                response.responseCode = ResponseCode.Success;
+                response.responseCode = ResponseCode.Created;
                 return response;
             }
             catch (Exception ex)
@@ -249,8 +285,8 @@ namespace AdvertisementService.Repository
                     return response;
                 }
 
-                var advertisementData = _context.Advertisements.Where(x => x.AdvertisementId == model.AdvertisementId).FirstOrDefault();
-                if (advertisementData == null)
+                var advertisement = _context.Advertisements.Where(x => x.AdvertisementId == model.AdvertisementId).FirstOrDefault();
+                if (advertisement == null)
                 {
                     response.status = false;
                     response.message = "Advertisement not found.";
@@ -269,9 +305,63 @@ namespace AdvertisementService.Repository
                     return response;
                 }
 
-                advertisementData.InstitutionId = model.InstitutionId;
-                advertisementData.MediaId = model.MediaId;
-                _context.Advertisements.Update(advertisementData);
+                var interval = _context.Intervals.Where(x => x.IntervalId == model.IntervalId).FirstOrDefault();
+                if (interval == null)
+                {
+                    response.status = false;
+                    response.message = "Interval not found.";
+                    response.advertisementsDetails = null;
+                    response.responseCode = ResponseCode.NotFound;
+                    return response;
+                }
+
+                var campaign = _context.Campaigns.Where(x => x.CampaignId == model.CampaignId).FirstOrDefault();
+                if (interval == null)
+                {
+                    response.status = false;
+                    response.message = "Campaign not found.";
+                    response.advertisementsDetails = null;
+                    response.responseCode = ResponseCode.NotFound;
+                    return response;
+                }
+
+                var advertisementsintervals = _context.Advertisementsintervals.Where(x => x.AdvertisementId == model.AdvertisementId).FirstOrDefault();
+                if (advertisementsintervals == null)
+                {
+                    Advertisementsintervals objAdvertisementsintervals = new Advertisementsintervals()
+                    {
+                        AdvertisementId = advertisement.AdvertisementId,
+                        IntervalId = interval.IntervalId
+                    };
+                    _context.Advertisementsintervals.Add(advertisementsintervals);
+                }
+                else
+                {
+                    advertisementsintervals.AdvertisementId = advertisement.AdvertisementId;
+                    advertisementsintervals.IntervalId = interval.IntervalId;
+                    _context.Advertisementsintervals.Update(advertisementsintervals);
+                }
+
+                var advertisementscampaigns = _context.Advertisementscampaigns.Where(x => x.AdvertisementId == model.AdvertisementId).FirstOrDefault();
+                if (advertisementscampaigns == null)
+                {
+                    Advertisementscampaigns objAdvertisementsintervals = new Advertisementscampaigns()
+                    {
+                        CampaignId = campaign.CampaignId,
+                        AdvertisementId = advertisement.AdvertisementId
+                    };
+                    _context.Advertisementscampaigns.Add(objAdvertisementsintervals);
+                }
+                else
+                {
+                    advertisementscampaigns.AdvertisementId = advertisement.AdvertisementId;
+                    advertisementscampaigns.CampaignId = campaign.CampaignId;
+                    _context.Advertisementscampaigns.Update(advertisementscampaigns);
+                }
+
+                advertisement.InstitutionId = model.InstitutionId;
+                advertisement.MediaId = model.MediaId;
+                _context.Advertisements.Update(advertisement);
                 _context.SaveChanges();
 
                 response.status = true;
