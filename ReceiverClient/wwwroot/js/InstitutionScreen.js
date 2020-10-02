@@ -1,4 +1,4 @@
-﻿var connection = new signalR.HubConnectionBuilder().withUrl("http://localhost:55202/trackServiceHub").build();
+﻿var connection = new signalR.HubConnectionBuilder().withUrl("http://localhost:5000/trackServiceHub").build();
 
 connection.on("ReceiveInstitutionData", function (result) {
     var li = document.createElement("li");
