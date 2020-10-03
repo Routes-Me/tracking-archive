@@ -1,6 +1,6 @@
 ﻿"use strict";
 
-var connection = new signalR.HubConnectionBuilder().withAutomaticReconnect([1000, 10000, 30000, 60000]).withUrl("http://localhost:5000/trackServiceHub?vehicleId=456&institutionId=1234&deviceId=4567").build();
+var connection = new signalR.HubConnectionBuilder().withAutomaticReconnect([1000, 10000, 30000, 60000]).withUrl("http://localhost:55202/trackServiceHub?vehicleId=456&institutionId=1234&deviceId=4567").build();
 
 //Disable send button until connection is established
 document.getElementById("sendButton").disabled = true;
@@ -34,9 +34,9 @@ document.getElementById("sendButton").addEventListener("click", function (event)
     var Longitude = document.getElementById("Longitude").value;
     var timestamp = document.getElementById("TimeStamp").value;
 
-    var model = { "SendLocation": [{ "latitude": Latitude, "longitude": Longitude, "timestamp": timestamp }] }
+    var model = { "SendLocation": [{ "latitude": parseFloat(Latitude), "longitude": parseFloat(Longitude), "timestamp": timestamp }] }
 
-    connection.invoke("SendLocation", model).catch(function (err) {
+    connection.invoke("SendLocation", JSON.stringify(model)).catch(function (err) {
         return console.error(err.toString());
     });
     event.preventDefault();

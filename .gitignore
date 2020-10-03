@@ -34,3 +34,4 @@
 /TrackService.RethinkDb_Abstractions/obj
 /TrackService.RethinkDb_Changefeed/bin/Debug/netcoreapp3.1
 /TrackService.RethinkDb_Changefeed/obj
+/SenderClient/.vs/SenderClient/config
